@@ -1,0 +1,612 @@
+:root{--bg:#070605;--paper:#e9dfca;--muted:#a99b82;--gold:#b9985e;--red:#761b17;--line:rgba(185,152,94,.34);--ease:cubic-bezier(.19,1,.22,1)}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg);scroll-padding-top:82px}body{margin:0;background:var(--bg);color:var(--paper);font-family:"Yu Mincho","Hiragino Mincho ProN","Noto Serif TC",serif;letter-spacing:.06em;overflow-x:hidden}a{color:inherit;text-decoration:none}body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 50% 15%,rgba(118,27,23,.13),transparent 35%),repeating-linear-gradient(90deg,transparent 0 64px,rgba(185,152,94,.018) 65px),#070605}body::after{content:"";position:fixed;inset:0;z-index:100;pointer-events:none;box-shadow:inset 0 0 120px #0009}
+.site-header{position:fixed;z-index:60;top:0;left:0;right:0;height:74px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(#070605ee,#07060599,transparent);border-bottom:1px solid #b9985e1f}.brand{display:flex;align-items:center;gap:14px}.brand-moon{display:grid;place-items:center;width:46px;height:46px;border:1px solid #76251e;border-radius:50%;font-size:14px;color:#b9985e}.site-title{font-size:13px;letter-spacing:.28em}.menu-toggle{position:fixed;opacity:0;pointer-events:none}.menu-button{width:46px;height:46px;display:grid;align-content:center;gap:6px;cursor:pointer;user-select:none}.menu-button span{display:block;width:28px;height:1px;margin-left:auto;background:var(--paper);transition:.45s var(--ease)}.menu-toggle:checked+.menu-button span:nth-child(1){transform:translateY(7px) rotate(45deg)}.menu-toggle:checked+.menu-button span:nth-child(2){opacity:0;transform:translateX(10px)}.menu-toggle:checked+.menu-button span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.drawer{position:fixed;z-index:55;top:0;right:0;width:min(460px,90vw);height:100dvh;background:#090806fa;border-left:1px solid var(--line);transform:translateX(105%);transition:transform .65s var(--ease);overflow:hidden}.drawer-inner{height:100%;padding:92px 48px 48px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#665033 transparent}.drawer-label{font:10px Arial,sans-serif;letter-spacing:.5em;color:var(--gold);margin:0 0 28px}.menu-link{display:flex;align-items:center;gap:18px;padding:16px 0;border-bottom:1px solid #ffffff0e;font-size:15px;letter-spacing:.16em;color:#918778;transition:.3s}.menu-link span{font:10px Arial,sans-serif;color:#6f6048;min-width:22px}.menu-link small{margin-left:auto;font:8px Arial,sans-serif;letter-spacing:.18em;color:#655b4d}.menu-link:hover,.menu-link.active{color:var(--paper);padding-left:8px}.menu-link.external{margin-top:24px;color:#c8b996}.menu-group{border-bottom:1px solid #ffffff08}.menu-group>.menu-link{border-bottom:0}.submenu{padding:0 10px 14px 40px}.submenu-link{display:block;position:relative;padding:7px 8px 7px 15px;color:#736b60;font-size:10px;line-height:1.55;letter-spacing:.06em;transition:.25s}.submenu-link::before{content:"";position:absolute;left:0;top:50%;width:7px;height:1px;background:#54442f}.submenu-link:hover,.submenu-link.active{color:#dbc69e;transform:translateX(3px)}.submenu-link.active::before{width:11px;background:#9d2d22}.drawer-backdrop{position:fixed;z-index:54;inset:0;background:#000a;opacity:0;visibility:hidden;transition:.45s;cursor:pointer}
+/* checkbox is inside header, drawer is later: use :has() with fallback JS class */
+body:has(#menu-toggle:checked) .drawer, body.menu-open .drawer{transform:none}body:has(#menu-toggle:checked) .drawer-backdrop, body.menu-open .drawer-backdrop{opacity:1;visibility:visible}
+.opening{
+  height: 100svh;
+  min-height: 900px;
+
+  display: grid;
+  place-items: center;
+
+  position: relative;
+
+  /* 原本是 hidden，改掉 */
+  overflow: visible;
+
+  background:
+    radial-gradient(
+      circle at center,
+      #21110d 0,
+      #0b0806 38%,
+      #050504 78%
+    );
+}
+  .opening::before,
+  .opening::after{content:"";position:absolute;width:58vw;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.25}
+  .opening::before{transform:rotate(34deg)}
+  .opening::after{transform:rotate(-34deg)}
+  .opening-content{text-align:center;position:relative;z-index:2;padding:24px}
+  .small-en{font:9px Arial,sans-serif;letter-spacing:.55em;color:var(--gold)}
+  .opening h1{font-weight:500;font-size:clamp(48px,9vw,104px);letter-spacing:.18em;margin:28px 0 8px;text-shadow:0 10px 30px #000}
+  .hero-subtitle{display:flex;align-items:center;justify-content:center;gap:24px;color:#cdbb99;letter-spacing:.42em}
+  .hero-subtitle i{display:block;width:56px;height:1px;background:#9a8054}.opening-copy{margin-top:72px;color:#cbbfa9;font-size:13px;line-height:2;letter-spacing:.16em}.hero-date{margin:60px 0 0;font-size:clamp(30px,4vw,54px);letter-spacing:.14em;color:#d0b579}.scroll-guide{position:absolute;bottom:24px;right:28px;display:flex;flex-direction:column;align-items:center;gap:10px;font:8px Arial,sans-serif;letter-spacing:.25em;color:var(--muted);writing-mode:vertical-rl}.scroll-guide i{display:block;width:1px;height:65px;background:linear-gradient(var(--gold),transparent);animation:scroll 2s infinite}@keyframes scroll{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.chapter-boundary,.chapter-transition{height:170px;display:flex;align-items:center;justify-content:center;gap:20px}.chapter-boundary i,.chapter-transition span{height:1px;width:min(220px,28vw);background:linear-gradient(90deg,transparent,var(--line))}.chapter-boundary i:last-child,.chapter-transition span:last-child{background:linear-gradient(90deg,var(--line),transparent)}.chapter-boundary b,.chapter-transition i{font-style:normal;font-weight:400;font-size:8px;color:var(--gold)}.chapter-transition{height:240px}.chapter-transition i{animation:diamond 3s ease-in-out infinite}@keyframes diamond{50%{transform:rotate(45deg) scale(1.6);color:var(--red)}}
+.chapter{width:min(920px,88vw);margin:auto;min-height:80svh;padding:80px 0 150px}.chapter-number{text-align:center;color:var(--gold);font-size:12px;letter-spacing:.35em;margin-bottom:72px}.chapter-number span{display:block;margin-top:12px;font:8px Arial,sans-serif;letter-spacing:.5em;color:#756b5c}.prose{width:min(680px,100%);margin:auto}.prose h2{text-align:center;font-size:clamp(25px,4vw,38px);font-weight:500;letter-spacing:.18em;margin:0 0 64px}.prose h2::after{content:"";display:block;width:1px;height:45px;background:linear-gradient(var(--red),transparent);margin:24px auto}.prose p{font-size:16px;line-height:2.35;letter-spacing:.08em;margin:0 0 2em;color:#ddd3c1;text-align:justify}.story-section-title{margin:90px 0 42px;padding:22px 0;text-align:center;font-size:18px;font-weight:500;line-height:1.8;color:#d6c4a1;border-top:1px solid #6f58345c;border-bottom:1px solid #6f58345c;scroll-margin-top:100px}.story-section-title:first-child{margin-top:0}.story-line.dialogue{color:#eadfc9}.para-gap{height:18px}.gap-2{height:38px}
+.reveal{opacity:1!important;transform:none!important;filter:none!important}
+.reveal.animate-in{animation:softIn 1.15s var(--ease) both}
+@keyframes softIn{
+  0%{opacity:.08;transform:translateY(34px) scale(.992);filter:blur(7px)}
+  45%{opacity:.65;filter:blur(2px)}
+  100%{opacity:1;transform:none;filter:none}
+}to{opacity:1;transform:none;filter:none}
+.page-transition{position:fixed;z-index:90;inset:0;background:var(--bg);transform:scaleY(0);transform-origin:bottom;pointer-events:none}.page-transition.play{animation:wipe 1.05s var(--ease)}@keyframes wipe{0%{transform:scaleY(0)}45%{transform:scaleY(1)}55%{transform:scaleY(1)}100%{transform:scaleY(0)}}footer{text-align:center;padding:90px 20px;font:8px Arial,sans-serif;letter-spacing:.6em;color:#5d5549;border-top:1px solid #ffffff08}
+.back-link{font-size:10px;letter-spacing:.25em;color:var(--gold)}.character-main{width:min(880px,88vw);margin:auto;padding:150px 0 100px}.character-heading{text-align:center;padding:60px 0 100px}.character-heading p,.character-en{font:9px Arial,sans-serif;letter-spacing:.55em;color:var(--gold)}.character-heading h1{font-size:clamp(38px,7vw,70px);font-weight:500;letter-spacing:.22em;margin:18px 0}.character-card{display:grid;grid-template-columns:90px 1fr;gap:38px;padding:70px 0;border-top:1px solid var(--line)}.character-card:last-child{border-bottom:1px solid var(--line)}.character-index{font-size:48px;color:#7e241d;opacity:.75}.character-card h2{font-size:30px;font-weight:500;letter-spacing:.15em;margin:10px 0 18px}.character-meta{color:#9f927d;font-size:12px;letter-spacing:.14em}.character-text{line-height:2.2;color:#d8cebb;max-width:620px}
+@media(max-width:650px){.site-header{height:64px;padding:0 18px}
+.brand{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-moon{
+  display: block;
+
+  width: 46px;
+  height: 46px;
+
+  border: none;
+  border-radius: 0;
+
+  overflow: visible;
+}
+
+.brand-moon img{
+  display: block;
+
+  width: 46px;
+  height: 46px;
+
+  object-fit: contain;
+
+  opacity: 1;
+  visibility: visible;
+}
+
+.site-title{
+  font-size: 13px;
+  letter-spacing: .28em;
+}.site-title{font-size:11px;letter-spacing:.2em}.opening h1{letter-spacing:.08em}.small-en{font-size:7px;letter-spacing:.35em}.opening-copy{margin-top:55px;padding:0 14px;font-size:11px}.hero-date{margin-top:45px}.scroll-guide{right:14px}.drawer{width:92vw}.drawer-inner{padding:78px 28px 38px}.submenu{padding-left:32px}.submenu-link{font-size:11px;padding-top:8px;padding-bottom:8px}.chapter{width:84vw;padding:70px 0 100px}.prose p{font-size:15px;line-height:2.2;text-align:left}.story-section-title{font-size:16px;margin:70px 0 34px}.chapter-transition{height:170px}.character-card{grid-template-columns:1fr;gap:12px}.character-index{font-size:34px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.scroll-guide i,.chapter-transition i,.reveal.animate-in{animation:none}}
+
+
+/* Fail-safe animated entrance: nothing is hidden until an animation class is applied. */
+.opening-content.hero-enter{
+  animation:heroEnter 1.8s var(--ease) both;
+}
+.opening-frame.frame-enter{
+  animation:frameEnter 2.1s var(--ease) both;
+}
+.site-header.header-enter{
+  animation:headerEnter 1.1s var(--ease) both;
+}
+.scroll-guide.scroll-enter{
+  animation:scrollGuideEnter 1.4s 1.1s var(--ease) both;
+}
+
+@keyframes heroEnter{
+  0%{opacity:.03;transform:translateY(24px) scale(.985);filter:blur(14px)}
+  38%{opacity:.5;filter:blur(7px)}
+  100%{opacity:1;transform:none;filter:none}
+}
+@keyframes frameEnter{
+  0%{opacity:0;transform:scale(.94)}
+  100%{opacity:1;transform:scale(1)}
+}
+@keyframes headerEnter{
+  0%{opacity:0;transform:translateY(-18px)}
+  100%{opacity:1;transform:none}
+}
+@keyframes scrollGuideEnter{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:none}
+}
+
+/* Section title animation is independent from body text. */
+.story-section-title.section-enter{
+  animation:sectionTitleEnter 1.15s var(--ease) both;
+}
+@keyframes sectionTitleEnter{
+  0%{opacity:.08;letter-spacing:.32em;transform:translateY(24px);filter:blur(5px)}
+  100%{opacity:1;letter-spacing:.06em;transform:none;filter:none}
+}
+
+/* Chapter title gets a slightly grander entrance. */
+.chapter-number.chapter-enter,
+.prose>h2.chapter-enter{
+  animation:chapterTitleEnter 1.35s var(--ease) both;
+}
+@keyframes chapterTitleEnter{
+  0%{opacity:.04;transform:translateY(28px);filter:blur(8px)}
+  60%{opacity:.72}
+  100%{opacity:1;transform:none;filter:none}
+}
+
+/* Paragraphs rise in with a tiny stagger; still visible if JS fails. */
+.story-line.line-enter{
+  animation:lineEnter .9s var(--ease) both;
+}
+@keyframes lineEnter{
+  0%{opacity:.08;transform:translateY(18px);filter:blur(3px)}
+  100%{opacity:1;transform:none;filter:none}
+}
+
+/* Separator breathes as the reader reaches a new chapter. */
+.chapter-transition.transition-enter span{
+  animation:lineGrow 1.2s var(--ease) both;
+}
+.chapter-transition.transition-enter i{
+  animation:diamondFlash 1.3s .15s var(--ease) both;
+}
+@keyframes lineGrow{
+  from{opacity:0;transform:scaleX(0)}
+  to{opacity:1;transform:scaleX(1)}
+}
+@keyframes diamondFlash{
+  0%{opacity:0;transform:rotate(0) scale(.2)}
+  60%{opacity:1;transform:rotate(45deg) scale(1.45);color:#a12d24}
+  100%{opacity:1;transform:rotate(0) scale(1);color:var(--gold)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .opening-content.hero-enter,
+  .opening-frame.frame-enter,
+  .site-header.header-enter,
+  .scroll-guide.scroll-enter,
+  .story-section-title.section-enter,
+  .chapter-number.chapter-enter,
+  .prose>h2.chapter-enter,
+  .story-line.line-enter,
+  .chapter-transition.transition-enter span,
+  .chapter-transition.transition-enter i{
+    animation:none!important;
+  }
+}
+.story-image{
+  position: relative;
+
+  width: min(900px, 88vw);
+  margin: 70px auto;
+  padding: 8px;
+
+  border: 1px solid rgba(185,152,94,.55);
+
+  box-shadow:
+    0 18px 60px rgba(0,0,0,.45);
+}
+
+
+.story-image img{
+  display: block;
+
+  width: 100%;
+  height: auto;
+}
+
+.story-image.ornate::before,
+.story-image.ornate::after{
+  content: "";
+
+  position: absolute;
+
+  width: 24px;
+  height: 24px;
+
+  pointer-events: none;
+}
+
+.story-image.ornate::before{
+  top: -1px;
+  left: -1px;
+
+  border-top: 2px solid #b9985e;
+  border-left: 2px solid #b9985e;
+}
+
+.story-image.ornate::after{
+  right: -1px;
+  bottom: -1px;
+
+  border-right: 2px solid #b9985e;
+  border-bottom: 2px solid #b9985e;
+}
+
+@media(max-width: 650px){
+  .story-image{
+    width: 88vw;
+    margin: 45px auto;
+    padding: 5px;
+  }
+
+  .story-image.ornate::before,
+  .story-image.ornate::after{
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ================================
+   人物介紹
+================================ */
+
+.character-card{
+  position: relative;
+
+  display: grid;
+  grid-template-columns: minmax(180px, 32%) minmax(0, 1fr);
+
+  column-gap: clamp(35px, 6vw, 90px);
+
+  width: 100%;
+
+  /* 每個人物上下留白 */
+  padding: 140px 0;
+
+  border-top: 1px solid var(--line);
+
+  align-items: stretch;
+}
+
+
+/* 最後一個人物底線 */
+.character-card:last-child{
+  border-bottom: 1px solid var(--line);
+}
+
+
+/* ================================
+   左側圖片區
+================================ */
+
+.character-visual{
+  position: relative;
+  width: 100%;
+
+  /* 不要寫 height: 100% */
+}
+
+
+/* ================================
+   人物圖片＋金框
+================================ */
+
+.character-image{
+  position: sticky;
+
+  top: 100px;
+
+  width: 100%;
+  max-width: 360px;
+
+  /* 關鍵：框只包住圖片 */
+  height: fit-content;
+  align-self: start;
+
+  margin-left: auto;
+  margin-right: 0;
+
+  padding: 7px;
+
+  box-sizing: border-box;
+
+  border: 1px solid rgba(185, 152, 94, .55);
+
+  background: #070605;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, .5);
+
+  z-index: 2;
+}
+
+
+/* 圖片本體 */
+
+.character-image img{
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  max-width: 100%;
+
+  object-fit: contain;
+}
+
+
+/* ================================
+   金色角落裝飾
+================================ */
+
+.character-image::before,
+.character-image::after{
+  content: "";
+
+  position: absolute;
+
+  width: 22px;
+  height: 22px;
+
+  pointer-events: none;
+}
+
+
+.character-image::before{
+  top: -1px;
+  left: -1px;
+
+  border-top: 2px solid #b9985e;
+  border-left: 2px solid #b9985e;
+}
+
+
+.character-image::after{
+  right: -1px;
+  bottom: -1px;
+
+  border-right: 2px solid #b9985e;
+  border-bottom: 2px solid #b9985e;
+}
+
+/* ================================
+   右側人物文字
+================================ */
+
+.character-info{
+  min-width: 0;
+
+  padding-top: 20px;
+}
+
+
+.character-info h2{
+  margin: 12px 0 18px;
+
+  font-size: clamp(26px, 3vw, 38px);
+
+  font-weight: 500;
+
+  letter-spacing: .15em;
+}
+
+
+.character-meta{
+  color: #9f927d;
+
+  font-size: 12px;
+
+  line-height: 2;
+
+  letter-spacing: .14em;
+}
+
+
+.character-text{
+  max-width: 620px;
+
+  color: #d8cebb;
+
+  font-size: 16px;
+
+  line-height: 2.2;
+}
+
+
+/* ================================
+   平板 / 小視窗
+================================ */
+
+@media(max-width: 900px){
+
+  .character-card{
+    /*
+      左側不再用固定 px，
+      視窗縮小時圖片跟著縮
+    */
+    grid-template-columns:
+      minmax(140px, 30vw)
+      minmax(0, 1fr);
+
+    column-gap: clamp(25px, 5vw, 50px);
+
+    padding: 110px 0;
+  }
+
+
+  .character-image{
+    width: 100%;
+
+    max-width: 280px;
+
+    /*
+      小視窗時不要硬算 50vh，
+      保證至少離頂部一段距離
+    */
+    top: 100px;
+  }
+
+}
+
+
+/* ================================
+   手機
+================================ */
+
+@media(max-width: 650px){
+
+  .character-card{
+    /*
+      仍然維持：
+      圖片左、文字右
+    */
+    grid-template-columns:
+      minmax(90px, 30vw)
+      minmax(0, 1fr);
+
+    column-gap: 20px;
+
+    padding: 80px 0;
+  }
+
+
+  .character-visual{
+    width: 100%;
+  }
+
+
+  .character-image{
+    width: 100%;
+
+    max-width: 150px;
+
+    /*
+      手機 Header 約 64px，
+      所以固定在它下面
+    */
+    top: 85px;
+
+    padding: 4px;
+  }
+
+
+  .character-image::before,
+  .character-image::after{
+    width: 14px;
+    height: 14px;
+  }
+
+
+  .character-info{
+    padding-top: 0;
+  }
+
+
+  .character-info h2{
+    font-size: clamp(20px, 6vw, 27px);
+
+    margin-top: 8px;
+
+    /*
+      避免名字太長把版面撐爆
+    */
+    overflow-wrap: anywhere;
+  }
+
+
+  .character-meta{
+    font-size: 10px;
+
+    line-height: 1.9;
+  }
+
+
+  .character-text{
+    font-size: 13px;
+
+    line-height: 2;
+  }
+
+}
+
+
+/* ================================
+   超小手機
+================================ */
+
+@media(max-width: 390px){
+
+  .character-card{
+    grid-template-columns:
+      minmax(80px, 28vw)
+      minmax(0, 1fr);
+
+    column-gap: 16px;
+  }
+
+
+  .character-image{
+    max-width: 110px;
+  }
+
+}
+
+/* ================================
+   左上角 LOGO
+================================ */
+
+.brand{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+
+/* 把原本的圓圈樣式完全覆蓋 */
+
+.brand .brand-moon{
+  display: block;
+
+  width: 70px;
+  height: 70px;
+
+  border: none;
+  border-radius: 0;
+
+  overflow: visible;
+
+  flex-shrink: 0;
+}
+
+
+.brand .brand-moon img{
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  opacity: 1;
+  visibility: visible;
+}
+
+
+/* 手機 */
+
+@media(max-width:650px){
+
+  .brand .brand-moon{
+    width: 38px;
+    height: 38px;
+  }
+
+}
+.hero-logo{
+  width: clamp(200px, 20vw, 300px);
+  margin: 0 auto 25px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-logo img{
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  object-fit: contain;
+}
