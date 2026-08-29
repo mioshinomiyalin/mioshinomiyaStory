@@ -610,3 +610,6 @@ body:has(#menu-toggle:checked) .drawer, body.menu-open .drawer{transform:none}bo
 
   object-fit: contain;
 }
+.site-header{
+  border-bottom: none;
+}
